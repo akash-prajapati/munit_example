@@ -129,7 +129,7 @@
         <version>7.7.Final</version>
       </plugin>
         -->
-        <!--
+        
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
@@ -138,15 +138,14 @@
           <warName>auto-web-project</warName>
         </configuration>
       </plugin>
-        -->
-        
+              
         <plugin>
    <groupId>org.jboss.as.plugins</groupId>
    <artifactId>jboss-as-maven-plugin</artifactId>
    <version>7.5.Final</version>
    <configuration>
       <hostname>${jboss.hostname}</hostname>
-      <port>9990</port>
+      <port>9999</port>
       <username>${jboss.admin.user}</username>
       <password>${jboss.admin.password}</password>
    </configuration>
