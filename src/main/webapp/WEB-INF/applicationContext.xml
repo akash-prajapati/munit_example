@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:cxf="http://camel.apache.org/schema/cxf"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="             http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd                            http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd             http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd">
+    <!-- 
+    <import resource="classpath:META-INF/cxf/cxf.xml"/>
+    <import resource="classpath:META-INF/cxf/cxf-extension-xml.xml"/>
+    <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
+    -->
+    <!-- Set username and password to values you set in etc/user.properties -->
+    <bean class="org.apache.activemq.camel.component.ActiveMQComponent" id="activemq">
+        <property name="connectionFactory">
+            <bean class="org.apache.activemq.ActiveMQConnectionFactory">
+                <property name="brokerURL" value="tcp://localhost:61616"/>
+                <property name="userName" value="admin"/>
+                <property name="password" value="admin"/>
+            </bean>
+        </property>
+    </bean>
+    <bean class="org.fusesource.camel.impl.BackEndImpl" id="backendImpl"/>
+    <bean class="org.fusesource.camel.model.Order" id="orderModel"/>
+    <bean class="org.fusesource.camel.processor.OrderProcessor" id="orderProcessor"/>
+    <!-- 
+    <cxf:cxfEndpoint  id="orderEndpoint" serviceClass="org.fusesource.camel.ws.OrderEndpoint"  address="http://localhost:8080/auto-web-project/cxf/order" />
+	-->
+    <camelContext id="rider-auto-backend" trace="true" xmlns="http://camel.apache.org/schema/spring">
+        <restConfiguration bindingMode="json" component="servlet" contextPath="/camel">
+            <dataFormatProperty key="prettyPrint" value="true"/>
+        </restConfiguration>
+        <rest path="/orderrest">
+            <get uri="/">
+                <to uri="direct:orderRestCall"/>
+            </get>
+        </rest>
+        <route id="allOrders">
+            <from id="_from1001" uri="direct:orderRestCall"/>
+            <log id="_log1002" message="Got Order name : ${headers.name} and amt: ${headers.amount}"/>
+            <bean id="_bean2" method="process" ref="orderProcessor"/>
+            <marshal id="_marshal10089">
+                <jaxb contextPath="org.fusesource.camel.model"/>
+            </marshal>
+            <inOnly id="_inOnly1003" uri="activemq:incomingOrders"/>
+            <transform id="_transform1004">
+                <constant>Ok, Your Order has been placed</constant>
+            </transform>
+        </route>
+        <!-- 
+    	<route id="servletOrder">
+        	<from 	id="_from401" uri="servlet:/order?servletName=camel&amp;matchOnUriPrefix=true"/>
+        	<to 	id="_to402"   uri="direct:placingOrder"/>
+    	</route>
+    	
+    	<route id="covertOrder">
+        	<from id="_from501" uri="direct:placingOrder"/>
+        	<log  id="_log502"  message="Got order : ${headers.amt} and amt: ${headers.currency}"/>
+        	<transform id="_transform1">
+                    <constant>Ok, Your Order has been placed</constant>
+            </transform>
+        </route>
+        -->
+        <!-- 
+     	        
+        <route customId="true" id="ws-to-jms">
+		        <from id="_from44" uri="cxf:bean:orderEndpoint"/>
+		        <setBody>
+		            <simple>${in.body[0]}</simple>
+		        </setBody>
+		        <marshal>
+		          <jaxb contextPath="org.fusesource.camel.model"/>
+		        </marshal>
+		        <inOnly uri="activemq:incomingOrders"/>
+		        <transform  id="_transform44">
+		            <constant>OK</constant>
+		        </transform>
+    	</route>
+    	
+    	-->
+        <route id="rider-auto-backend-route">
+            <from id="_from1" uri="activemq:orders"/>
+            <unmarshal id="_unmarshal1">
+                <jaxb contextPath="org.fusesource.camel.model"/>
+            </unmarshal>
+            <bean id="_bean1" ref="backendImpl"/>
+        </route>
+        <route id="file-to-jms">
+            <!--  <from id="_from202" uri="file:target/placeorder"/> -->
+            <from id="_from202" uri="file://D:/Files/target/placeorder"/>
+            <to id="_to202" uri="activemq:incomingOrders"/>
+        </route>
+        <route customId="true" id="normalize-message-data">
+            <from id="_from3" uri="activemq:incomingOrders"/>
+            <choice id="_choice3">
+                <when id="_when1">
+                    <simple>${header.CamelFileName} regex '^.*xml$'</simple>
+                    <unmarshal id="_unmarshal13">
+                        <jaxb contextPath="org.fusesource.camel.model"/>
+                    </unmarshal>
+                    <marshal id="_marshal13">
+                        <jaxb contextPath="org.fusesource.camel.model"/>
+                    </marshal>
+                    <to id="_to3" uri="activemq:orders"/>
+                </when>
+                <when id="_when2">
+                    <simple>${header.CamelFileName} regex '^.*(csv|csl)$'</simple>
+                    <unmarshal id="_unmarshal2">
+                        <bindy
+                            classType="org.fusesource.camel.model.Order" type="Csv"/>
+                    </unmarshal>
+                    <convertBodyTo id="_convertBodyTo1" type="org.fusesource.camel.model.Order"/>
+                    <marshal id="_marshal2">
+                        <jaxb contextPath="org.fusesource.camel.model"/>
+                    </marshal>
+                    <to id="_to2" uri="activemq:orders"/>
+                </when>
+                <otherwise id="_otherwise1">
+                    <unmarshal id="_unmarshal3">
+                        <jaxb contextPath="org.fusesource.camel.model"/>
+                    </unmarshal>
+                    <marshal id="_marshal3">
+                        <jaxb contextPath="org.fusesource.camel.model"/>
+                    </marshal>
+                    <to id="_to33" uri="activemq:orders"/>
+                </otherwise>
+            </choice>
+        </route>
+        <route id="helloRoute">
+            <from id="_from111" uri="servlet:hello"/>
+            <choice id="_choice111">
+                <when id="_when111">
+                    <header>name</header>
+                    <transform id="_transform111">
+                        <simple>Hi I am ${sysenv.HOSTNAME}. Hello ${header.name} how are you today?</simple>
+                    </transform>
+                </when>
+                <otherwise id="_otherwise111">
+                    <transform id="_transform211">
+                        <constant>Add a name parameter to uri, eg ?name=foo</constant>
+                    </transform>
+                </otherwise>
+            </choice>
+        </route>
+    </camelContext>
+    <!-- 
+   
+   
+
+    <camelContext id="camelContext-91ee4144-0560-4d05-aaa3-54743db2512e" xmlns="http://camel.apache.org/schema/spring">
+        <route id="helloRoute">
+          
+            <from id="_from1" uri="servlet:hello"/>
+            <choice id="_choice1">
+                <when id="_when1">
+                   
+                    <header>name</header>
+                    
+                    <transform id="_transform1">
+                        <simple>Hi I am ${sysenv.HOSTNAME}. Hello ${header.name} how are you today?</simple>
+                    </transform>
+                </when>
+                <otherwise id="_otherwise1">                    
+                    <transform id="_transform2">
+                        <constant>Add a name parameter to uri, eg ?name=foo</constant>
+                    </transform>
+                </otherwise>
+            </choice>
+        </route>
+    </camelContext>
+    
+    -->
+</beans>
