@@ -125,6 +125,15 @@
         <artifactId>jboss-as-maven-plugin</artifactId>
         <version>7.7.Final</version>
       </plugin>
+        
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.2</version>
+        <configuration>
+          <warName>auto-web-project</warName>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>
