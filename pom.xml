@@ -110,6 +110,7 @@
           <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
+         <!--
       <plugin>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
@@ -120,11 +121,14 @@
           </webApp>
         </configuration>
       </plugin>
+        -->
+         <!--
       <plugin>
         <groupId>org.jboss.as.plugins</groupId>
         <artifactId>jboss-as-maven-plugin</artifactId>
         <version>7.7.Final</version>
       </plugin>
+        -->
         <!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
