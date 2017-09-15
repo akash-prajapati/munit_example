@@ -129,7 +129,7 @@
         <version>7.7.Final</version>
       </plugin>
         -->
-        
+        <!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
@@ -138,7 +138,7 @@
           <warName>auto-web-project</warName>
         </configuration>
       </plugin>
-              
+           -->   
         <plugin>
    <groupId>org.jboss.as.plugins</groupId>
    <artifactId>jboss-as-maven-plugin</artifactId>
