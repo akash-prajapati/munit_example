@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.tcs.examples</groupId>
   <artifactId>auto-web-project</artifactId>
@@ -8,10 +9,12 @@
   <packaging>war</packaging>
   <name>Camel Web Application</name>
   <description>Camel project that deploys the Camel routes as a WAR</description>
+    
   <properties>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+    
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -23,6 +26,7 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+    
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -82,6 +86,7 @@
       <scope>test</scope>
     </dependency>  
   </dependencies>
+    
   <build>
     <finalName>${project.artifactId}</finalName> 
     <defaultGoal>install</defaultGoal>     
@@ -122,4 +127,5 @@
         </plugin>
     </plugins>
   </build>
+    
 </project>
