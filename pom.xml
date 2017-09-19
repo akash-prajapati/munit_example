@@ -87,16 +87,7 @@
   <build>
      <finalName>${project.artifactId}</finalName> 
     <defaultGoal>install</defaultGoal>
-      <!--
-    <resources>
-      <resource>
-        <directory>.transformations</directory>
-      </resource>
-      <resource>
-        <directory>src/main/resources/</directory>
-      </resource>
-    </resources>
--->
+     
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -143,18 +134,16 @@
       </plugin>
            
         <plugin>
-   <groupId>org.jboss.as.plugins</groupId>
-   <artifactId>jboss-as-maven-plugin</artifactId>
-   <version>7.5.Final</version>
-   <configuration>
-      <hostname>${jboss.hostname}</hostname>
-      <port>9999</port>
-      <username>${jboss.admin.user}</username>
-      <password>${jboss.admin.password}</password>
-   </configuration>
-</plugin>
+            <groupId>org.jboss.as.plugins</groupId>
+            <artifactId>jboss-as-maven-plugin</artifactId>
+            <version>7.5.Final</version>
+            <configuration>
+                <hostname>${jboss.hostname}</hostname>
+                <port>9999</port>
+                <username>${jboss.admin.user}</username>
+                <password>${jboss.admin.password}</password>
+            </configuration>
+        </plugin>
     </plugins>
-  </build>
-    
-    <!-- This is updated by Akash on 19 SEP -->
+  </build>    
 </project>
